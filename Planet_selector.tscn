@@ -1,0 +1,45 @@
+[gd_scene load_steps=5 format=3 uid="uid://cso254wq6p4q"]
+
+[ext_resource type="Texture2D" uid="uid://t6d0hl1jlyyq" path="res://sprites/planets/background.png" id="1"]
+[ext_resource type="Script" uid="uid://dqst3xv8mt45u" path="res://planet_selector.gd" id="2"]
+[ext_resource type="Texture2D" uid="uid://buv2ajycpv5gn" path="res://sprites/planets/planet_Sheet.png" id="3"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_earth"]
+extents = Vector2(75, 70)
+
+[node name="Node2D" type="Node2D"]
+script = ExtResource("2")
+
+[node name="background" type="Sprite2D" parent="."]
+position = Vector2(843, 428)
+scale = Vector2(0.878125, 0.7888889)
+texture = ExtResource("1")
+
+[node name="Earth" type="Sprite2D" parent="."]
+position = Vector2(552, 421)
+rotation = -0.31383762
+scale = Vector2(0.6470794, 0.66610825)
+texture = ExtResource("3")
+region_enabled = true
+region_rect = Rect2(25, 220, 150, 140)
+
+[node name="EarthArea" type="Area2D" parent="Earth"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Earth/EarthArea"]
+shape = SubResource("RectangleShape2D_earth")
+
+[node name="HoverOutline" type="Line2D" parent="Earth"]
+visible = false
+points = [Vector2(-85, -75), Vector2(85, -75), Vector2(85, 75), Vector2(-85, 75), Vector2(-85, -75)]
+width = 4.0
+default_color = Color(0, 1, 0, 1)
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="DescriptionLabel" type="Label" parent="UI"]
+offset_left = 750.0
+offset_top = 400.0
+offset_right = 750.0
+offset_bottom = 400.0
+visible = false
+text = "Planeta Tierra"

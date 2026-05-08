@@ -1,0 +1,37 @@
+[gd_scene format=3 uid="uid://cso254wq6p4q"]
+
+[ext_resource type="Texture2D" uid="uid://t6d0hl1jlyyq" path="res://sprites/planets/background.png" id="1_hd62y"]
+[ext_resource type="Script" uid="uid://dqst3xv8mt45u" path="res://planet_selector.gd" id="1_lwsyu"]
+[ext_resource type="Texture2D" uid="uid://buv2ajycpv5gn" path="res://sprites/planets/planet_Sheet.png" id="2_lwsyu"]
+
+[node name="Node2D" type="Node2D" unique_id=1706404822]
+script = ExtResource("1_lwsyu")
+
+[node name="background" type="Sprite2D" parent="." unique_id=2120169482]
+position = Vector2(843, 428)
+scale = Vector2(0.878125, 0.7888889)
+texture = ExtResource("1_hd62y")
+
+[node name="Earth" type="Sprite2D" parent="." unique_id=2088365973]
+position = Vector2(552, 421)
+rotation = -0.31383762
+scale = Vector2(0.6470794, 0.66610825)
+texture = ExtResource("2_lwsyu")
+region_enabled = true
+region_rect = Rect2(25, 220, 150, 140)
+
+[node name="HoverOutline" type="Line2D" parent="Earth" unique_id=-1294967295]
+visible = false
+points = PackedVector2Array(-85, -75, 85, -75, 85, 75, -85, 75, -85, -75)
+width = 4.0
+default_color = Color(0, 1, 0, 1)
+
+[node name="UI" type="CanvasLayer" parent="." unique_id=-1294967293]
+
+[node name="DescriptionLabel" type="Label" parent="UI" unique_id=-1294967292]
+visible = false
+offset_left = 750.0
+offset_top = 400.0
+offset_right = 750.0
+offset_bottom = 400.0
+text = "Planeta Tierra"
