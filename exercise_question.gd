@@ -84,8 +84,6 @@ func _ready():
 	# Diálogo para seleccionar archivos
 	var file_dialog = FileDialog.new()
 	file_dialog.name = "FileDialog"
-	file_dialog.mode = FileDialog.Mode.OPEN_FILE
-	file_dialog.access = FileDialog.Access.FILE_SYSTEM
 	file_dialog.connect("file_selected", Callable(self, "_on_file_selected"))
 	add_child(file_dialog)
 	
