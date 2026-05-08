@@ -15,26 +15,28 @@ script = ExtResource("1_cau7c")
 
 [node name="username" type="TextEdit" parent="." unique_id=455515199]
 layout_mode = 0
-offset_left = 220.0
-offset_top = 101.0
-offset_right = 520.0
-offset_bottom = 146.0
+offset_left = 447.0
+offset_top = 241.0
+offset_right = 747.0
+offset_bottom = 286.0
 placeholder_text = "Username"
 
-[node name="password" type="TextEdit" parent="." unique_id=1474897846]
+[node name="password" type="LineEdit" parent="." unique_id=1474897846]
 layout_mode = 0
-offset_left = 219.0
-offset_top = 168.0
-offset_right = 519.0
-offset_bottom = 213.0
+offset_left = 446.0
+offset_top = 308.0
+offset_right = 746.0
+offset_bottom = 353.0
 placeholder_text = "Password"
+secret = true
+secret_character = "*"
 
 [node name="Login" type="Button" parent="." unique_id=1485343573]
 layout_mode = 0
-offset_left = 416.0
-offset_top = 237.0
-offset_right = 515.0
-offset_bottom = 268.0
+offset_left = 637.0
+offset_top = 373.0
+offset_right = 736.0
+offset_bottom = 404.0
 scale = Vector2(1.0761905, 1.2142857)
 text = "Login"
 
@@ -42,10 +44,10 @@ text = "Login"
 
 [node name="ErrorLabel" type="Label" parent="." unique_id=1234567890]
 layout_mode = 0
-offset_left = 219.0
-offset_top = 290.0
-offset_right = 519.0
-offset_bottom = 320.0
+offset_left = 446.0
+offset_top = 420.0
+offset_right = 746.0
+offset_bottom = 450.0
 theme_override_colors/font_color = Color(1, 0, 0, 1)
 
 [connection signal="button_down" from="Login" to="." method="_on_login_button_down"]
