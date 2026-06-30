@@ -1,0 +1,452 @@
+{
+  "info": {
+    "_postman_id": "e2d2f0cb-0f7b-4b70-9f61-5d9b82a8d002",
+    "name": "Jutge Base Flow",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Replica el flujo de dev-tools/test_base_flow_api.py: A resuelve sum+sort, B resuelve sum y falla sort; valida leaderboard A=2/B=1. Usuarios estáticos: alumno_a_base / alumno_b_base."
+  },
+  "item": [
+    {
+      "name": "01. Login Alumno A",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/x-www-form-urlencoded"
+          }
+        ],
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            {
+              "key": "username",
+              "value": "{{studentAUsername}}",
+              "type": "text"
+            },
+            {
+              "key": "password",
+              "value": "{{studentPassword}}",
+              "type": "text"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{baseUrl}}/token",
+          "host": ["{{baseUrl}}"],
+          "path": ["token"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Login A OK', function () { pm.response.to.have.status(200); });",
+              "const data = pm.response.json();",
+              "pm.environment.set('tokenA', data.access_token);"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "02. Login Alumno B",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/x-www-form-urlencoded"
+          }
+        ],
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            {
+              "key": "username",
+              "value": "{{studentBUsername}}",
+              "type": "text"
+            },
+            {
+              "key": "password",
+              "value": "{{studentPassword}}",
+              "type": "text"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{baseUrl}}/token",
+          "host": ["{{baseUrl}}"],
+          "path": ["token"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Login B OK', function () { pm.response.to.have.status(200); });",
+              "const data = pm.response.json();",
+              "pm.environment.set('tokenB', data.access_token);"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "03. Alumno A submit sum (file)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{tokenA}}"
+          }
+        ],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "exercise_id",
+              "value": "{{sumExerciseId}}",
+              "type": "text"
+            },
+            {
+              "key": "code_file",
+              "src": "/home/sergio/Escritorio/TFG/jutge/postman/sum.c",
+              "type": "file"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{baseUrl}}/submissions",
+          "host": ["{{baseUrl}}"],
+          "path": ["submissions"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Submit A sum OK', function () { pm.response.to.have.status(200); });",
+              "const data = pm.response.json();",
+              "pm.environment.set('jobA_sum', data.job_id);"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "04. Poll Job A sum",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{tokenA}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/jobs/{{jobA_sum}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["jobs", "{{jobA_sum}}"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Poll A sum responde 200', function () { pm.response.to.have.status(200); });",
+              "const data = pm.response.json();",
+              "if (data.status === 'pending' || data.status === 'evaluating') {",
+              "  postman.setNextRequest('04. Poll Job A sum');",
+              "} else {",
+              "  pm.test('A sum termina completed', function () { pm.expect(data.status).to.eql('completed'); });",
+              "  pm.test('A sum verdict AC', function () { pm.expect(data.verdict).to.eql('AC'); });",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "05. Alumno A submit sort_words (file)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{tokenA}}"
+          }
+        ],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "exercise_id",
+              "value": "{{sortExerciseId}}",
+              "type": "text"
+            },
+            {
+              "key": "code_file",
+              "src": "/home/sergio/Escritorio/TFG/jutge/postman/sort.c",
+              "type": "file"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{baseUrl}}/submissions",
+          "host": ["{{baseUrl}}"],
+          "path": ["submissions"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Submit A sort OK', function () { pm.response.to.have.status(200); });",
+              "const data = pm.response.json();",
+              "pm.environment.set('jobA_sort', data.job_id);"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "06. Poll Job A sort_words",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{tokenA}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/jobs/{{jobA_sort}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["jobs", "{{jobA_sort}}"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Poll A sort responde 200', function () { pm.response.to.have.status(200); });",
+              "const data = pm.response.json();",
+              "if (data.status === 'pending' || data.status === 'evaluating') {",
+              "  postman.setNextRequest('06. Poll Job A sort_words');",
+              "} else {",
+              "  pm.test('A sort termina completed', function () { pm.expect(data.status).to.eql('completed'); });",
+              "  pm.test('A sort verdict AC', function () { pm.expect(data.verdict).to.eql('AC'); });",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "07. Alumno B submit sum (file)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{tokenB}}"
+          }
+        ],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "exercise_id",
+              "value": "{{sumExerciseId}}",
+              "type": "text"
+            },
+            {
+              "key": "code_file",
+              "src": "/home/sergio/Escritorio/TFG/jutge/postman/sum.c",
+              "type": "file"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{baseUrl}}/submissions",
+          "host": ["{{baseUrl}}"],
+          "path": ["submissions"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Submit B sum OK', function () { pm.response.to.have.status(200); });",
+              "const data = pm.response.json();",
+              "pm.environment.set('jobB_sum', data.job_id);"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "08. Poll Job B sum",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{tokenB}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/jobs/{{jobB_sum}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["jobs", "{{jobB_sum}}"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Poll B sum responde 200', function () { pm.response.to.have.status(200); });",
+              "const data = pm.response.json();",
+              "if (data.status === 'pending' || data.status === 'evaluating') {",
+              "  postman.setNextRequest('08. Poll Job B sum');",
+              "} else {",
+              "  pm.test('B sum termina completed', function () { pm.expect(data.status).to.eql('completed'); });",
+              "  pm.test('B sum verdict AC', function () { pm.expect(data.verdict).to.eql('AC'); });",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "09. Alumno B submit sort_words bad (file)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{tokenB}}"
+          }
+        ],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "exercise_id",
+              "value": "{{sortExerciseId}}",
+              "type": "text"
+            },
+            {
+              "key": "code_file",
+              "src": "/home/sergio/Escritorio/TFG/jutge/postman/sort_bad.c",
+              "type": "file"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{baseUrl}}/submissions",
+          "host": ["{{baseUrl}}"],
+          "path": ["submissions"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Submit B sort bad OK', function () { pm.response.to.have.status(200); });",
+              "const data = pm.response.json();",
+              "pm.environment.set('jobB_sort', data.job_id);"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "10. Poll Job B sort_words bad",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{tokenB}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/jobs/{{jobB_sort}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["jobs", "{{jobB_sort}}"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Poll B sort bad responde 200', function () { pm.response.to.have.status(200); });",
+              "const data = pm.response.json();",
+              "if (data.status === 'pending' || data.status === 'evaluating') {",
+              "  postman.setNextRequest('10. Poll Job B sort_words bad');",
+              "} else {",
+              "  pm.test('B sort bad termina completed', function () { pm.expect(data.status).to.eql('completed'); });",
+              "  pm.test('B sort bad verdict WA', function () { pm.expect(data.verdict).to.eql('WA'); });",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "11. Leaderboard assert A=2 B=1",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/leaderboard",
+          "host": ["{{baseUrl}}"],
+          "path": ["leaderboard"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Leaderboard responde 200', function () { pm.response.to.have.status(200); });",
+              "const rows = pm.response.json();",
+              "const aUser = pm.environment.get('studentAUsername');",
+              "const bUser = pm.environment.get('studentBUsername');",
+              "const a = rows.find(r => r.username === aUser);",
+              "const b = rows.find(r => r.username === bUser);",
+              "pm.test('Alumno A existe en leaderboard', function () { pm.expect(a).to.not.be.undefined; });",
+              "pm.test('Alumno B existe en leaderboard', function () { pm.expect(b).to.not.be.undefined; });",
+              "pm.test('Alumno A completados = 2', function () { pm.expect(a.completed_count).to.eql(2); });",
+              "pm.test('Alumno B completados = 1', function () { pm.expect(b.completed_count).to.eql(1); });"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    }
+  ]
+}
